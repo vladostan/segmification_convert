@@ -81,7 +81,15 @@ model = sm.Linknet_bottleneck_crop(backbone_name=backbone, input_shape=input_sha
 model.load_weights('weights/' + weights + '.hdf5')
 
 # In[]:
+from keras.utils import plot_model
+plot_model(model, to_file='keras_model.png')
+
+# In[]:
 onnx_model = keras2onnx.convert_keras(model, model.name)
+
+# In[]:
+import onnx
+onnx.save_model(onnx_model, 'model.onnx')
 
 # In[]:
 preprocessing_fn = sm.get_preprocessing(backbone)
@@ -118,3 +126,22 @@ plt.imshow(np.squeeze(y2_pred_onnx > 0.5))
 offlane = np.squeeze(y1_pred_onnx) > 0.5
 
 print("OFFLANE PREDICT ONNX: {}".format(offlane))
+
+# In[]:
+import time
+
+num = 1000
+
+start_time = time.time()
+
+for i in tqdm(range(num)):
+    
+    x = np.zeros((1,input_shape[0],input_shape[1],3))
+    x = preprocessing_fn(x.astype(np.single))
+    
+    x = x if isinstance(x, list) else [x]
+    feed = dict([(input.name, x[n]) for n, input in enumerate(sess.get_inputs())])
+    pred_onnx = sess.run(None, feed)
+                    
+print("--- {} seconds ---".format(time.time() - start_time))
+print("--- {} fps ---".format(num/(time.time() - start_time)))
