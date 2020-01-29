@@ -69,9 +69,7 @@ print("OFFLANE PREDICT: {}".format(offlane))
 
 # In[]:
 import sys
-sys.path.append("../")
-from cyber_py import cyber
-from modules.common.util.testdata.simple_pb2 import SimpleMessage
+from cyber_py3 import cyber
 
 
 
