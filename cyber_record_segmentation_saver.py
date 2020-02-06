@@ -5,9 +5,6 @@ from modules.drivers.proto.sensor_image_pb2 import Image
 import numpy as np
 import cv2
 import segmentation_models as sm
-
-import imageio
-
     
 def callback(image):
     """
